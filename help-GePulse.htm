@@ -1,0 +1,2116 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="mik">
+  <meta name="GENERATOR"
+ content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+  <title>help-GePulse</title>
+  <style type="text/css">
+<!--
+.style1 {
+font-family: Arial, Helvetica, sans-serif;
+font-weight: bold;
+}
+.style2 {font-family: Arial, Helvetica, sans-serif}
+.style4 {
+font-family: Arial, Helvetica, sans-serif;
+font-weight: bold;
+font-size: 36px;
+}
+.style6 {font-size: 18px}
+.style8 {font-family: Arial, Helvetica, sans-serif; font-style: italic; }
+-->
+  </style>
+</head>
+<body class="style2">
+<center>
+<h2><a name="Title"></a>User Manual for</h2>
+</center>
+<center>
+<h1>GePulse</h1>
+</center>
+<center>
+<h3>Michael Pusch, Istituto di Biofisica, Genova,&nbsp;<a name="email"></a>email:
+<a href="mailto:pusch@ge.ibf.cnr.it">pusch@ge.ibf.cnr.it</a>&nbsp;<br>
+Last change: 17.10.2014</h3>
+</center>
+<h1>
+<a name="Introduction"></a><b>1. Introduction</b></h1>
+<font size="+2">GePulse</font> is a free acquisition program for
+electrophysiologists.
+It is similar to the HEKA Pulse Program (and maybe to Axon Clampex)
+allowing
+flexible stimulation sequences. The program supports <br><br>
+
+- National Instruments PCI interfaces (PCI-6035E/PCI-6036E,PCI-6052, PCI-6221, PCI-6251, ...)<br>
+- National Instruments USB interfaces<br>
+- Instrutech ITC-16 and ITC-18 interfaces.
+<br><br>
+
+Pulsed and gap-free continuous acquisition (of up to 4 channels) is
+supported.
+
+
+<font size="-1">
+<p>(Note for ITC16/18 users: the possibility of changing the
+holding
+potential during continuous acquisition has an unavoidable effect of
+small
+gaps at the moment of the VHold change. See <a
+ href="#Limitation-ITC-16">A1.
+Limitation in gap-free recording with the ITC-16 and ITC-18 interface
+when
+the holding potential is changed during the acquisition.)</a>
+</p>
+</font>
+
+</p>
+<p><a name="Index"></a><br>
+<b><font size="+2">Index</font></b>
+</p>
+<p><a href="#Introduction">1. Scope of GePulse - Introduction</a>
+</p>
+<p><a href="#Hardware">2. Hardware</a>
+</p>
+<p><a href="#Features">3. Basic Features of GePulse</a>
+</p>
+<p><a href="#Installation">4. Installation</a>
+</p>
+<p><a href="#Files">4.1 Data files, set-files, stimulation-sequence
+files; Easy export of data into spreadsheet</a><br>
+</p>
+<p><a href="#FrontPanel">5. The front panel windows and commands</a><br>
+</p>
+<p><a href="#Parameters">6. How are parameters like gain or frequency
+read?</a>
+</p>
+<p><a href="#Shortcuts">7. Shortcuts</a>
+</p>
+<p><a href="#Settings">8. The settings dialog</a>
+</p>
+<p><a href="#PGFEditor">9. The Stimulation-Sequence Editor</a>
+</p>
+<p><a href="#RemoteControl">10. Remote control through batch file and
+'macros' and triggering of macros by digital input</a>
+</p>
+<p><a href="#RsCm">11. How to control the Rs and Cm calculation</a>
+</p>
+<p><a href="#Sound">12. Sound indication</a>
+</p>
+<p><a href="#Appendix">Appendix</a>
+</p>
+<p><a href="#Limitation-ITC-16">A1. Limitation in gap-free recording
+with
+the ITC-16/18 interface when the holding potential is changed during
+the
+acquisition</a>
+</p>
+<p><a href="#KnownBugs">A2. Known bugs</a>
+</p>
+<p><a href="#FileFormat">A3. The file-format</a>
+<br>
+&nbsp;
+</p>
+<h1><a name="Hardware"></a><b>2. Hardware requirements</b></h1>
+<p>So far<font size="+2"> GePulse</font> runs&nbsp; with the following
+National
+Instruments interfaces: PCI-6035E/PCI-6036E, PCI-6052, PCI-6221, and
+PCI-6251. These require
+the
+Nidaq (or Nidaqmx) software (comes with the interface or can be
+downloaded). In principle, with Nidaqmx, GePulse should run with almost
+every National
+Instruments acquisition interface. But not all have been tested.<br>
+</p>
+Both, traditional Nidaq and Nidaqmx are supported. Traditional Nidaq
+is superior if a fast repetition
+rate of pulses is needed. The overhead in Nidaqmx prohibits fast
+repetition.For
+all NI interfaces the following triggering connection has to be wired:<br>
+<p><big><big><big><span style="color: rgb(255, 0, 0);">CONNECT </span><b
+ style="color: rgb(255, 0, 0);">DIGITIAL I/O</b><span
+ style="color: rgb(255, 0, 0);"> CHANNEL 0 WITH</span><b
+ style="color: rgb(255, 0, 0);"> PFI0
+for NI-interfaces</b><span style="color: rgb(255, 0, 0);">!</span><br>
+</big></big></big></p>
+<p><big>This connection "triggers" the synchronous stimulation and
+acquisition. </big><big>Without this connection the program "hangs"
+and the pulses will not start.<br>
+</big></p>
+<p><big>See <a target="_blank" href="sframes/bnc-2090.html">here</a>
+how to make this connection on the BNC2090 connector block.<br>
+</big></p>
+The hardwire-connection <big><span
+ style="font-weight: bold; font-family: monospace;">Digitial io channel
+0 - PFI-0</span></big> has to be implemented, depending on your
+connector to the NI-interface.<br>
+<br>
+Alternatively, GePulse runs with the <font size="+2">Instrutech
+ITC-16/18
+</font>interfaces.<br>
+<br>
+If you use an ITC-16/18 interface you must install the Instrutech
+driver.
+Sampling is limited to 200 kHz /NumberOfChannels.<br>
+&nbsp;
+<br>
+The interface must be defined once in the <span
+ style="font-family: monospace;">Edit-&gt;Define Interface</span>
+dialog, and the program must be restarted afterwards.<br>
+<h1><a name="Features"></a></h1>
+<b><font size="+3">3. Basic Features of GePulse</font></b>
+<ul>
+  <li> <font size="+1">Pulsed and continous (gap-free) data acquisition
+of up to 4 input channels (max sampling frequency depends on the
+interface)<br>
+    </font></li>
+  <li><font size="+1">Data files can be read by GePulse
+itself
+and by<a href="sframes/Ana.html">
+Ana</a>, a freely available powerful analysis program, </font><font
+ size="+1">and data can be exported in various formats (including abf -
+"axon-binary-format"- files)</font></li>
+  <li><font size="+1">Stimulation pulse formats are flexible with no
+limitation of the number of segments (allowing e.g. for high frequency
+train stimulation) and with the possibility of linking sequences</font><br>
+  </li>
+  <li><font size="+1">Leak subtraction
+(regular P/n, alternate, ...) and averaging<br>
+    </font></li>
+  <li><font size="+1">Digital filter for display and online peak
+analysis<br>
+    </font></li>
+  <li><font size="+1">Seal-test with indication of resistance and Rs
+and
+Cm calculation</font></li>
+  <li> <font size="+1">Gain-tables for each channel can be loaded
+(automatically,
+once set up!)</font></li>
+  <li> <font size="+1">Tree-like data structure for easy data
+management</font></li>
+  <li><font size="+1">Program can be partially remotely controlled
+through a batch-file</font></li>
+  <li><font size="+1">Easy to plug National Instruments&nbsp; USB /
+FireWire /
+PCMCIA interfaces should be soon supported (using the Nidaqmx-driver)</font></li>
+</ul>
+<h1>
+<a name="Installation"></a><b><font size="+3">4. Installation</font></b></h1>
+<font size="+1">To install GePulse on your computer: download the&nbsp;</font>&nbsp;
+GePulse-<font size="+1"><a href="software-mik.htm">zip-file</a> . Unzip
+the
+files into the folder where you want to store the program (e.g.
+"c:/programs/GePulse").
+Create your own Short-cuts on the desktop or in the Start-Menu. The
+zip-file
+contains <tt>GePulse.exe</tt> and some dll's that you might need. In
+order
+to be able to acquire data with the National Instruments interfaces you
+must have installed the National-Instruments (Nidaq) software on your
+computer.
+This normally ships with the interface. GePulse supports both
+traditional
+Nidaq as well as Nidaqmx. For the ITC-16 and ITC18 you must install the
+respective driver.&nbsp; If you have not installed any driver GePulse
+will
+run in a "simulation"- or "offline"-mode. You can use it in this mode
+to
+test it without the necessity of an interface. You can use it in this
+mode
+also to read existing data files, e.g. for looking at them or for
+exporting
+data. You can also use the <a href="sframes/Ana.html">Ana-program</a>
+to
+analyze GePulse data.
+<br><br>
+ The interface is defined in the dialog<tt>
+Edit-&gt;Define
+Interface</tt>. After changing the interface type you must restart the
+program.</font>
+<p><a name="Files"></a><b><font size="+3">4.1 Data files, set-files,
+stimulation-sequence
+files</font></b>
+</p>
+<p><font size="+1">Acquired data are kept in memory </font><b><i><font
+ size="+2">only</font></i></b><font size="+1">
+if the Store-Button is active (i.e. <font
+ style="color: rgb(255, 0, 0);" size="+2"><span
+ style="font-weight: bold;">red</span></font>). Otherwise the data will
+not
+be
+stored anywhere in memory but only displayed! A valid file-name has to
+be chosen before the Store-Button can be activated. If you try to
+activate
+it without having specified a file-name before, you will be asked for a
+file-name.</font>
+<br>
+<font size="+1">Even if the Store-Button is active, however, the data
+is not immediately stored on the file but only in&nbsp; memory. Only
+when
+you select<tt> File-&gt;New</tt> or <tt>File-&gt;Open (Read only)</tt>
+or <tt>File-&gt;Open
+(modify)</tt> the data will be written on the file, the file will be
+closed
+and a new file opened. If you select&nbsp; <tt>File-&gt;Save (update
+on disk)</tt>
+the currently available data will be written to the file, but the file
+will not be closed, and the memory will be not be emptied.</font>
+</p>
+<p><font size="+1">GePulse stores in the registry the directory name of
+the
+last used data file name and proposes it as the data directory when you
+restart GePulse next time.</font>
+</p>
+<p><font size="+1">GePulse also stores in the registry the name of the
+last
+used (i.e. stored or opened) <a href="#Settings">settings-file</a> and
+<a href="#StimSeqEditor">Stimulation-Sequence-file</a>
+and reloads them automatically on restart (if the files are still
+existent).<br>
+</font></p>
+<p><font size="+1">Data can be exported to spreadsheet programs in the
+followong easy way: After acqusition, select </font><font size="+1"><span
+ style="font-family: monospace;">View-&gt;Edit format of numbers to
+show in redraw</span></font><font size="+1"> to define the format, then
+</font><font size="+1"><span style="font-family: monospace;">View-&gt;On
+redraw: show numbers</span></font><font size="+1">, and then select the
+item in the tree to export and press </font><font size="+1"><span
+ style="font-family: monospace;">return</span></font><font size="+1">.
+The data are shown as a table from where they can be copied to the
+clipboard by right clicking on the table (</font><font size="+1"><span
+ style="font-family: monospace;">select all</span></font><font size="+1">,
+then </font><font size="+1"><span style="font-family: monospace;">copy</span></font><font
+ size="+1">). Now they can be pasted into SigmaPlot, for example.</font><br>
+</p>
+<p><br>
+</p>
+&nbsp;&nbsp;<a name="FrontPanel"></a><br>
+<h1><b><font size="+3">5. The front panel windows and commands</font></b></h1>
+<big>The main window is divided into 4 subwindows. On the left/top are
+shown
+in&nbsp; an expandable tree all acquired series and sweeps.
+<br><br>
+For redrawing already acquired data,
+expand the tree and right-click on the series or entry (or hit <span
+ style="font-family: monospace;">return</span> once the desired item is
+selected).<br>
+<br>
+On the left/bottom are shown various parameters like the actual
+voltage, gain etc. Some of the fields are read-only, while others may
+be editable.
+
+This is particularly interesting for the gain of the amplifier. Several options to "feed" the actual gain to GePulse
+are possible. Normally, the most convenient manner is to "telegraph" the gain value via a dedicated ADC channel using the
+telegraphing output provided by the amplifier (available in all modern amplifiers, but not, for example, for the EPC7). The procedure to feed the gain value to GePulse is decribed in more detail below.
+<br><br>
+NOTE: Gain values for the current are in Ohms = V/A. For example a classical gain setting on a patch clamp amplifier could be 50 mV / pA. This value is equivalent to 50 GOHM = 50E9 OHM = 50* 10<sup>9 </sup> OHM.
+<br><br>If the amplifier does not have a telegraphing
+gain, the gain value (in Ohms = V/A) can be edited directly in the front panel.
+ <br><br>
+ Some fields
+are optional - see the <a href="#Flags">flags dialog</a>. The "Seal"
+button (<span style="font-family: monospace;">Ctrl+space</span>)
+invokes the repetive application of a square pulse. The parameters of
+this pulse (test pulse) can be edited in the <a href="#Settings">settings
+dialog</a>. <br>
+<br>
+The right part of the screen is divided in two windows, the trace
+window (top) and the notebook/info window (bottom). The notebook/info
+window shows either text messages of actions or of data analysis, or,
+in graphical fomat, the results of the online-analysis. The mode (text
+/ graphics) is toggled with the <a href="#Shortcuts">shortcut</a> <span
+ style="font-family: monospace;">N</span> or with the menu command<span
+ style="font-family: monospace;"> Online Analysis -&gt; Show/Hide</span>.<br>
+<br>
+The top-right window shows the acquired data and several buttons that
+either invoke an action or set a flag or a value.<br>
+Of particular importance are the top-left fields - the <span
+ style="font-weight: bold;">Store button</span> and the <span
+ style="font-weight: bold;">selection dialog</span> that selects the
+type of experiment. Data are stored if, and only if, the <span
+ style="font-weight: bold;">Store button</span> is <font size="+2"><big><span
+ style="font-weight: bold; color: rgb(255, 0, 0);">red</span></big></font>
+(see
+<a href="#Files">4.1 Data files, set-files, stimulation-sequence files</a>).<br>
+<br>
+In the selection field next to the store button, the experiment type is
+defined. The choices are<br>
+<br>
+&nbsp;&nbsp;&nbsp; - In out&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; meaning
+"inside out configuration of the patch clamp technique"<br>
+&nbsp;&nbsp;&nbsp; - On cell&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; meaning "cell attached
+configuration of the patch clamp technique"<br>
+<br>
+&nbsp;&nbsp;&nbsp; - Out out&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; meaning "outside out
+configuration of the patch clamp technique"<br>
+&nbsp;&nbsp;&nbsp; - Whole cell&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; meaning "whole cell configuration of the
+patch clamp technique"<br>
+&nbsp;&nbsp;&nbsp; - Voltage clamp&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+meaning "2-electrode voltage clamp"<br>
+<br>
+If, and only if, the recording mode is selected as <span
+ style="font-family: monospace;">In out</span> or <span
+ style="font-family: monospace;">On cell</span>,<span
+ style="font-weight: bold;"> the voltage-output </span>and<span
+ style="font-weight: bold;"> the current-input </span>are<span
+ style="font-weight: bold;"> inverted</span>. For example, if you
+select VHold = 100 mV, and the recording mode is <span
+ style="font-family: monospace;">In out</span> the DAC output is set to
+obtain a voltage-output of -100 mV, because the voltage is referred to
+in the physiological convention. This assures that voltage-gated sodium
+channels always activate at positive voltages. If you do not care about
+such things, chose one of the three latter settings (Out out - whole
+cell -&nbsp; voltage clamp).<br>
+<br>
+In the <span style="font-weight: bold;">Filt. field</span> you can
+specify a filter frequency (in Hz). Data are filtered using a Gaussian
+filter only for display, not permanently. Set to 0 Hz for no filtering.<br>
+<br>
+In the</big><big> <span style="font-weight: bold;">Avg. field</span>
+you can specify the number of averages to perform for a selected pulse
+protocol. This applies only to pulsed data and is iognored for gap-free
+recording. The average is performed sweep by sweep.<br>
+<br>
+</big><big>Clicking on the </big><big><span style="font-weight: bold;">Clear
+button</span> erases the screen but has no effect on the data
+(Shortcut: <span style="font-family: monospace;">Ctrl+Backspace</span>).<br>
+<br>
+</big><big>The </big><big><span style="font-weight: bold;">Timer field</span>
+shows the time since its last reset. Reset can be invoked by hitting "<span
+ style="font-family: monospace;">t"</span>. <br>
+<br>
+</big><big>In the</big><big> <span style="font-weight: bold;">Vhold
+field</span>
+the holding potential is specified in mV. It can be increased /
+decreased in 10 mV steps using <span style="font-family: monospace;">Ctr+Arrow
+up</span> / <span style="font-family: monospace;">Ctrl + Arrow down</span>.<br>
+<br>
+</big><big>If the </big><big><span style="font-weight: bold;">Show Pn
+button</span>
+is active (i.e. </big><big> <font size="+2"><big><span
+ style="font-weight: bold; color: rgb(255, 0, 0);">red</span></big></font></big><big>)
+the data acquired during the "leak pulses" are shown in green. However,
+for reasons of efficiency this is only possible upon replay of the
+acquired and stored data. Thus to inspect the leak response the
+acquired series has to be selected in the tree and redrawn. <br>
+<br>
+</big><big>If the </big><big><span style="font-weight: bold;">Leak sub
+button</span>
+is active (i.e. </big><big> <font size="+2"><big><span
+ style="font-weight: bold; color: rgb(255, 0, 0);">red</span></big></font></big><big>)
+the leak pulses are subtracted from the raw data for diplay, otherwise
+not. This does not affect the way how the data are stored: data are
+always stored leak-subtracted, together with the response to the
+leak-pulses. Thus it is always possible to recover the unsubtracted,
+raw data, offline. <br>
+<br>
+</big><big>If the </big><big><span style="font-weight: bold;">Overlay
+button</span>
+is active (i.e. </big><big> <font size="+2"><big><span
+ style="font-weight: bold; color: rgb(255, 0, 0);">red</span></big></font></big><big>)
+the sweeps of one series are overlayed on the screen (old sweeps in
+gray).<br>
+</big><big>If the </big><big><span style="font-weight: bold;">Overlay
+all button</span>
+is active (i.e. </big><big> <font size="+2"><big><span
+ style="font-weight: bold; color: rgb(255, 0, 0);">red</span></big></font></big><big>)
+the screen is not wiped before starting a new series. <br>
+<br>
+</big><big>In the</big><big> <span style="font-weight: bold;">Display
+gain field</span>
+an amplification factor is specified to scale up the traces. If more
+than one channel is acquired this affects only the actually active
+channel. See also <a href="#Shortcuts">Shortucts</a>.<br>
+</big><big><br>
+In the</big><big> <span style="font-weight: bold;">Offset field</span>
+a fractional display offset is specified to move traces up or down. If
+more
+than one channel is acquired this affects only the actually active
+channel. See also <a href="help-GePulse.html#Shortcuts">Shortucts</a>.<br>
+</big><br>
+<big>The radio buttons in the group </big><big><span
+ style="font-weight: bold;">Act. ch.</span>
+determine the active channel (if more than one channel is acquired).
+This is necessary for the display-gain and offset settings.<br>
+<br>
+The </big><big><span style="font-weight: bold;">Re. Sc.</span></big><big><span
+ style="font-weight: bold;"> button</span> resets all scales.<br>
+<br>
+</big><big>The </big><big><span style="font-weight: bold;">Break button</span>
+interrupts any ongoing acquisition immediately (shortcut: <span
+ style="font-family: monospace;">Ctrl+B</span>). </big><br>
+<big><br>
+</big><big>The </big><big><span style="font-weight: bold;">Stop button</span>
+finishes the current sweep before interrupting (shortcut: <span
+ style="font-family: monospace;">Ctrl+S</span>). <br>
+<br>
+</big><big>The </big><big><span style="font-weight: bold;">Gap free
+button</span>
+starts a gap-free recording (shortcut: <span
+ style="font-family: monospace;">Ctrl+G</span>). The parameters
+(SampleTime and length of sweep) are determined in the <a
+ href="#Settings">Settings dialog</a> (<span
+ style="font-family: monospace;">F8</span>) or in the <a
+ href="#StimulationSequence">Stimulation-Editor</a> (<span
+ style="font-family: monospace;">F9</span>).<br>
+<br>
+Clicking on one of the buttons corresponding to the stimulation
+sequences, starts execution the the pulsed acquisition. Right clicking
+on these they can be edited.<br>
+<br>
+</big><big> </big><big><br>
+</big><br>
+<h1><a name="Parameters"></a><b><font size="+3">6. How are parameters
+like gain
+or frequency read?</font></b></h1>
+<p><font size="+1">For each recorded channel (max. 4 right now) it has
+to be defined which ADC should be used for its acquisition. To do this,
+and to define the gain settings for each channel, in the settings
+dialog (F8) (in the "source and gain source" block),&nbsp;a row of
+parameters is shown and editable for each channel. In the first column
+the ADC for the channel has to be specified. In the second column the
+units can be specified. Default is "A" for Ampere. The third column
+("Gain ADC") is relevant only if the gain-setting of the amplifier (or
+other device) is fed to GePulse telegraphically. In this case, the ADC
+used for the gain-input is specified in this third column. However,
+this is not the only possibility to determine the&nbsp;gain (see
+below). How the gain is determined is described in the following
+paragraph.<br>
+</font></p>
+<p>
+<font size="+1">The gain-setting of each channel, the recording
+bandwidth,
+the temperature and two "user-defined" parameters can be<br>
+&nbsp;&nbsp;&nbsp; - fed to the
+program
+"telegraphically" with an ADC,<br>
+&nbsp;&nbsp;&nbsp; - or a default value can be assigned,<br>
+&nbsp;&nbsp;&nbsp; - or
+it
+can be made "editable" in the front panel.<br>
+</font></p>
+<p><font size="+1">The procedure for each of
+these
+parameters is as follows:</font>
+</p>
+<p><font size="+1">In the settings dialog you first define for a given
+parameter
+the mode of the determination of its value in the field with the
+heading
+"gain source" (for the gains of the channels) or "source" for the other
+parameters. The possibilities are:</font>
+<br>
+<br>
+</p>
+<li><font size="+1"><b><i>Default:&nbsp;&nbsp;</i></b>&nbsp;&nbsp;&nbsp;
+the
+default value, that is also assigned here, is used. The field in the
+front-panel
+is not editable.</font></li>
+<li> <font size="+1"><b><i>Value:&nbsp;</i></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the corresponding field in the front panel is editable and the user has
+to assign a value there (see <a href="#ValueTable">here</a> for using
+a
+table with&nbsp; fixed values together with this option, for easier
+selection
+of predefined values)</font></li>
+<li> <font size="+1"><b><i>ADC:&nbsp;</i></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a voltage is read from the corresponding ADC (defined in the Settings
+dialog)
+and a value is assigned according to a table (see below)</font></li>
+<li> <font size="+1"><b><i>Eqn.:</i></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a voltage is read from the corresponding ADC (defined in the Settings
+dialog)
+and a value is assigned according to an equation (see below)</font></li>
+<br>
+<font size="+1">The "<b><i>ADC</i></b>"- option is useful for a
+limited
+number of possible values like e.g. the gain settings of the amplifier
+or the filter settings of a filter if the instruments has a
+corresponding
+"telegraphing" output. The voltage (normally between -10 V and&nbsp;
++10
+V) is read from the specified ADC. It is used to obtain a value e.g.
+for
+the gain from a table that is read in from an ASCII-file that is
+specified
+through the button "Change" in the settings-dialog. The table MUST
+CONFORM
+to the following format:</font>
+<p><font size="+1">voltage1&nbsp; value1</font>
+<br>
+<font size="+1">voltage2&nbsp; value2</font>
+<br>
+<font size="+1">...</font>
+</p>
+<p><font size="+1">A typical table could be</font>
+</p>
+<font size="+1">7.5&nbsp; 1</font>
+<br>
+<font size="+1">8.5&nbsp; 2</font>
+<br>
+<font size="+1">9.5&nbsp; 5</font>
+&nbsp;
+<br>
+<font size="+1"><br>
+The interpretation by GePulse is that if the voltage
+is
+larger than 9.5 than the gain is 5. Otherwise: if the voltage is larger
+than 8.5 than the gain is 2. Otherwise: the gain is 1. It does not
+matter
+in which order the values are written in the table because they are
+reordered
+anyway. Thus the above table is equivalent to</font>
+<p><font size="+1">9.5&nbsp; 5</font>
+<br>
+<font size="+1">7.5&nbsp; 1</font>
+<br>
+<font size="+1">8.5&nbsp; 2</font>
+<br>
+&nbsp;
+</p>
+<b><font size="+1">ATTENTION: IF THE TABLE IS NOT FOUND IT MIGHT BE
+THAT
+NO ERROR IS ISSUED</font></b>
+<p><font size="+1">The "<b><i>Eqn.</i></b>"- option is useful if a
+continuous
+parameter like e.g. the temperature is read from a device like e.g. a
+temperature
+controller. Let's make an example. The temperature controller provides
+a voltage-output that converts to a temperature (in degrees C) by a
+complicated
+function:</font>
+<br>
+<font size="+1">T = 0.01*x*x +&nbsp; 10*x + 20, where x is the
+voltage-output
+of the device. You connect the voltage-output to ADC-5 and assign 5 to
+the ADC for the temperature, "<b><tt>Eqn.</tt></b>" for the "<b><tt>source</tt></b>"
+and the string (without quotes)&nbsp; "<tt>0.01*x*x +&nbsp; 10*x + 20</tt>"
+in the "<tt>table-file
+or equation</tt>"-field.</font>
+</p>
+<p><font size="+1">The following rules apply for the equation:</font>
+</p>
+
+<font size="+1">The independent variable can be written as "x",
+or
+as
+"v" or as "t".</font>
+<br>
+<font size="+1">Arbitrary nested expressions (with parenthesis) are
+allowed.</font>
+<br>
+<font size="+1">Spaces are ignored. No distinction between upper- and
+lowercase is made.</font>
+<br>
+<font size="+1">Allowed functions are:</font>
+<br>
+<font size="+1">a+b</font>
+<br>
+<font size="+1">a-b</font>
+<br>
+<font size="+1">a*b</font>
+<br>
+<font size="+1">a/b</font>
+<br>
+<font size="+1">a^b</font> <br>
+<font size="+1">cos(a)</font>
+<br>
+<font size="+1">sin(a)</font>
+<br>
+<font size="+1">exp(a)</font>
+<br>
+<font size="+1">exp10(a) = 10^a</font>
+<br>
+<font size="+1">inv(a)=1/a</font>
+<br>
+<font size="+1">sqrt(a)=square root</font>
+<br>
+<font size="+1">log(a)=natural log</font>
+<br>
+<font size="+1">log10(a)= log base 10</font><br>
+<font size="+1">fabs(a)=absolute value</font>
+<br>
+<font size="+1">step(a) = 0 for a&lt;0; 1 else (this can also be used
+to calc. the maximum and minimum: Max(a,b)=a*step(a-b)+b*step(b-a) ;
+Min(a,b)=a*step(b-a)+b*step(a-b) )</font>
+<p><font size="+1">Comments can be added after the function definition
+after
+a '. Example:</font>
+</p>
+<p><tt><font size="+1">0.01*x*x +&nbsp; 10*x + 20 ' calibration curve
+of
+temperature control</font></tt>
+<br>
+&nbsp;
+</p>
+<p><a name="ValueTable"></a><br>
+<font size="+1">If you select the "<b><i>Value" </i></b>option, you
+can
+still read and use a table for selecting the various settings as
+described
+now for an example. Suppose your amplifier has 3 possible
+gain-settings:
+1 mV/pA, 5 mV/pA and 20 mV/pA (corresponding thus to the gain settings
+1 GOhm, 5 GOhm, and 20 GOhm). Create a table as above with "fake"
+voltages,
+e.g.</font>
+</p>
+<p><font size="+1">1&nbsp; 1e9</font>
+<br>
+<font size="+1">2 5e9</font>
+<br>
+<font size="+1">3 20e9</font>
+</p>
+<p><font size="+1">name the file "Gain-Table.txt" (or any name you
+prefer).
+Go the the settings-dialog and select this table-file in the
+corresponding
+channel. Don't forget to save you settings-file such that next time
+everything
+goes automatically! Now in the front-panel, close to the
+"Gain-text-field"
+two small buttons (one "+" and one "-") appear that can be used to
+select
+the next or previous gain setting. The short-cuts "<tt>Ctrl+left arrow</tt>"
+and "<tt>Ctrl+right arrow</tt>" do the same thing.</font>
+<br>
+<font size="+1">Note that in&nbsp; this case the table has to be
+ordered
+in the sense that smaller "fake-voltage" values have to correspond to
+smaller
+gain values.Otherwise it will not work properly. I.e. the table</font>
+</p>
+<p><font size="+1">3&nbsp; 1e9</font>
+<br>
+<font size="+1">2&nbsp; 2e9</font>
+<br>
+<font size="+1">1&nbsp; 3e9</font>
+</p>
+<p><font size="+1">will not be good. </font><br>
+&nbsp;
+<br>
+
+</p>
+<h1><a name="Shortcuts"></a><b><font size="+3">7. Shortcuts</font></b></h1>
+<br>
+<b><tt><font size="+1">D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Delete selected item in tree</font></tt></b>
+<br>
+<b><tt><font size="+1">O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Overlay On/Off</font></tt></b>
+<br>
+<b><tt><font size="+1">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Overlay all On/Off</font></tt></b>
+<br>
+<b><tt><font size="+1">L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Subtract Leak On/Off</font></tt></b>
+<br>
+<b><tt><font size="+1">P&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show Leak On/Off<br>
+B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Subtract baseline On/Off<br>
+</font></tt></b>
+</>
+<p><b><tt><font size="+1">N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Toggle graphical online analysis on/off</font></tt></b></p>
+<p><b><tt><font size="+1">F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Toggle "Play sound"</font></tt></b><br>
+</p>
+<p><b><tt><font size="+1">S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Store On/Off</font></tt></b>
+<br>
+<b><tt><font size="+1">&#8220;+&#8221;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Double Display gain (of the active channel)</font></tt></b>
+<br>
+<b><tt><font size="+1">&#8220;-&#8221;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Half Display gain&nbsp;&nbsp; (of the active channel)</font></tt></b>
+<br>
+<b><tt><font size="+1">F8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Setup</font></tt></b>
+<br>
+<b><tt><font size="+1">F9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Stimulation editor</font></tt></b>
+</p>
+<p><b><tt><font size="+1">Ctrl&nbsp; +
+Backspace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Clear Screen</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; + Page
+Up/Down&nbsp;&nbsp;&nbsp;&nbsp;
+Increase/Decrease display offset (of the active channel)</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; + Arrow
+Up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Increase Vhold by 10 mV</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; + Arrow
+Down&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Decrease Vhold by 10 mV</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; + Arrow
+Left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Same as pushing the "plus gain button" (see <a href="#ValueTable">here</a>
+for explanation)</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; + Arrow
+Right&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Same as pushing the "minus gain button" (see <a href="#ValueTable">here</a>
+for explanation)</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+Space&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Start/Stop Seal test</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Start Sequence 0</font></tt></b>
+<br>
+<b><tt><font size="+1">&#8230;</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Start Sequence 9</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Interrupt Stimulation (Break)</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Open file for modify</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+New File (for write)</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Open file read only</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Stop Stimulation (i.e. finish this sweep, then stop)</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+E&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Export</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+G&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Start gap-free recording</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show some info about the selected tree item</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Edit flags</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Reset scales</font></tt></b>
+<br>
+<b><tt><font size="+1">Ctrl&nbsp; +
+W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Clear message window</font></tt></b>
+<br>
+<b><tt><font size="+1">C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Estimate Rs and Cm in the next seal-test pulse</font></tt></b>
+</p>
+<b><tt><font size="+1">Alt&nbsp;&nbsp; + O &nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Edit settings for online
+analysis <br>
+</font></tt></b><b><tt><font size="+1">Alt&nbsp;&nbsp; + Q&nbsp;&nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Interrupt any ongoing
+batch-command processing&nbsp; <br>
+</font></tt></b><b><tt><font size="+1">Alt&nbsp;&nbsp; +
+U&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Save File (update to disk)</font></tt></b>
+<br>
+<b><tt><font size="+1">Alt&nbsp;&nbsp; +
+Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ZAP (i.e. apply a short pulse as defined by the zap-parameters; the</font></tt></b>
+<br>
+<b><tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+sample time used is the same as for the seal-test pulse)</font></tt></b>
+<br>
+&nbsp;
+<br>
+&nbsp;
+<h1><a name="Settings"></a><b><font size="+3">8. Settings</font></b></h1>
+<big>Most settings are set in the general dialog<tt> Edit-&gt;Settings
+(F8)</tt>,
+while some flags are set in the <tt>Edit-&gt;Flags </tt>dialog.
+</big>
+<p><big>The meaning of the various parameters in this dialog are:
+</big></p>
+<p><big>For each of the possible 4 input channels the following
+parameters
+can
+be defined:
+</big></p>
+<p><big><tt>- ADC</tt>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the zero-based index of the ADC from which this channel shall be
+acquired
+</big></p>
+<p><big><tt>- Unit</tt>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a
+string
+of the unit, e.g. "V", "A" (to be entered without the " ")
+</big></p>
+<p><big><tt>- GainADC</tt>:&nbsp; if the amplification setting of the
+channel
+is "telegraphed" to the computer here the corresponding ADC is
+specified.
+Otherwise this field is without use. For example in general, the
+current
+signal will have a variable gain (in units V/A!) while often the
+voltage-channel
+has a fixed gain of e.g. 10 V/V.
+</big></p>
+<big><tt>- Gain Source</tt>:&nbsp; In this selection menu the way of
+how
+the gain shall be determined is defined. There are 4 possibilities as
+explained
+in <a href="#Parameters">6. How are parameters like gain or frequency
+read?&nbsp; </a>Note that the "equation" option is not available for
+the regularly sampled input channels, but only for the extra
+parameters, like e.g. temperature.<br>
+<tt><br>
+- default</tt> and<tt> table-file </tt>and <span
+ style="font-family: monospace;">equation</span> (latter only for the
+extra parameters) are also
+explained
+in <a href="#Parameters">6. How are parameters like gain or frequency
+read?</a>.
+</big>
+<p><big>The four additional parameters, bandwidth, temperature, user
+param1,
+user param2, are saved with each series. You define which ADC is to be
+used if they are fed telegraphically etc. just as for the gain settings
+of the acquired channels (see above).
+</big></p>
+<p><big>The parameters of the <tt>Test-pulse</tt> group define the
+properties
+of the "seal-test pulse".
+<br>
+&nbsp;
+</big></p>
+<p><big>The parameter "<tt>Sample time (gap free)</tt>" defines the
+sample
+time
+for gap-free recordings. The parameter "<tt>time window (gap free)</tt>"
+defines the length of individual sweeps in gap-free recordings. These
+sweeps
+are an artificial subdivision of the truly gap-free recording.
+</big></p>
+<p><big>Parameters of the "<tt>General</tt>" group:
+</big></p>
+<p><big><tt>- Number of channels:</tt> self-explanatory
+</big></p>
+<p><big><tt>- Stimulus Scale:</tt> defines the scale factor of the
+command
+voltage.
+It depends on the amplifier setting. If you have to apply 1 V at the
+command
+input BNC of the amplifier to actually clamp a cell at 100 mV the
+stimulus
+scale = 0.1.
+</big></p>
+<p><big><tt>- Stim Dac:</tt> the DAC channel of the interface used for
+command
+output
+</big></p>
+<p><big><tt>- Volt. Input Scale:</tt> If the amplifier provides an
+output of
+the potential with a gain of&nbsp; 10 V/V you have to insert Volt.
+Input
+Scale = 10.
+</big></p>
+<p><big><tt>- Voltage Inp. ADC:</tt> the ADC where the potential shall
+be
+read.
+This parameter is not really essential because the voltage is
+practically
+never used. It is only stored for each series and displayed on the
+screen.
+</big></p>
+<p><big><tt>- Voltage Range ADC (+/-) in Volt:</tt> for National
+Instruments
+interfaces this is generally 10 V, for the ITC16/18 this is 10.24 Volt.
+This value cannot be edited - it is shown for information.<br>
+</big></p>
+<big><tt>- Voltage Range DAC (+/-) in Volt:</tt> for National
+Instruments
+interfaces this is generally 10 V, for the ITC16/18 this is 10.24 Volt.
+This value cannot be edited - it is shown for information.<br>
+<a name="ParametersValueFile"><br>
+<br>
+<br>
+The group <span style="font-weight: bold;">"</span><span
+ style="font-family: monospace; font-weight: bold;">Alternative output
+channel</span><span style="font-weight: bold;">"</span> is used to
+control an alternative usage of the pulse-protocol, e.g. for the
+control of a perfusion system. If the checkbox "<span
+ style="font-family: monospace;">Use alternative output channel</span>"
+is checked, the analog output defined in the pulse-protocol is directed
+on the alternative DAC channel defined here with the alternative
+scaling defined here. The Holding potential is, of course, still
+controlled normally and the alternative channel does not apply to the
+"seal-test".<br>
+</a></big>
+<p><big><a name="ParametersValueFile"><br>
+</a>- Checkbox "<b>Do write parameter values on file</b>": if checked,
+several parameters are written on an ASCII file during seal-test or
+waiting.
+These can be read by another program and used for various purposes.
+Currently
+the format of the string is (example):
+</big></p>
+<p><big>"R
+10295;I4412.84;H-0.100;V0.045;G1.00;Rs9.2;Cm13.4;f999.00;T10.0;U0.000;u0.000;S0;#"
+</big></p>
+<big>Meaning:
+<br>
+R: Seal resistance = 10295 MegaOhm
+<br>
+I: current = 4412.84 pA
+<br>
+H: VHold = -0.1 Volt
+<br>
+V: Vm = 0.045 Volt
+<br>
+G: Gain = 1 mV/pA
+<br>
+Rs: Series resistance 9.2 MegaOhms
+<br>
+Cm: Membrane Capacitance 13.4 pF
+<br>
+f: bandwidth (filter) = 999 Hz
+<br>
+T: temperature = 10 degrees,
+<br>
+U: Userparam 1 = 0
+<br>
+u: Userparam 2 = 0;
+<br>
+S: Sealtest off (S0 or S1)
+<br>
+#: end of string<br>
+<a name="Flags"></a><br>
+Flags in the <tt>Edit-&gt;Flags</tt> dialog:
+</big>
+<p><big>- The check-box <b><tt>dimmed overlay </tt></b>defines if the
+old
+traces
+are to be shown in gray (checked) or black&nbsp; (unchecked).
+</big></p>
+<p><big><tt>- Checkbox "<b>Do NOT do online analysis</b>":</tt> As a
+default
+some online analysis is performed on the "relevant" Y-Segment (see <a
+ href="#StimSeqEditor">9.
+The Stimulation-Sequence Editor</a> ). This includes the mean value,
+the
+maximum value and the minimum value. These values are displayed in the
+"message-window". They are calculated between 10%&nbsp; and 90% of the
+length of the segment. For very fast stimulation or if you have
+overflow
+problems of the interface you turn off the online-analysis with this
+check-box.
+</big></p>
+<p><big>- Checkbox "<b><tt>Do write parameter values on file</tt></b>":
+see&nbsp; above
+</big></p>
+<p><big>- <b><tt>show noise box</tt></b>: if checked the rms-noise
+during
+the
+seal-test pulse is indicated in the front panel
+</big></p>
+<p><big><tt>- <b>do check for clipping</b></tt>: this flag activates
+the
+clipping
+button and the check for clipping. E.g. for high speed pulsing this can
+be turned off.
+</big></p>
+<p><big><b><tt>- calc Cm and Rs continously:</tt></b> this flag
+determines
+if
+the Rm and Cs should be calculated with each seal-test pulse or only on
+demand (see <a href="#RsCm">11. How to control the Rs and Cm
+calculation</a>.
+Also the method of Rs and Cm calculation is explained there).
+</big></p>
+<p><big><b><tt>- Allow multiple instances of Gepulse to run (with
+program
+name
+"Gepulse.exe"):</tt></b> this flag determines if more than one instance
+of GePulse can be started. To avoid errors in the interface
+comunication
+it is generally advisable to forbid multiple instances. For
+analysis-purposes,
+instead, it might be more useful to allow multiple instances. Note that
+this flag works only if the executable is not renamed, i.e. the "exe"
+file
+has the name "GePulse.exe".<br>
+</big></p>
+<p><big><b><tt>- Show capacity subtract button:</tt></b> this flag
+determines if the "capacity subtract" button should be visualized in
+the front panel. Activation of this activates an automatic procedure to
+subtract the capacity based on pulses to a voltage where no ionic
+currents is expected to flow. For this, the last segment of the pulse
+protocol&nbsp; is considered to be at such a voltage and the responses
+to voltage steps during the other segements is corrected according to
+the reponse to the last segment, assuming a linear (in voltage)
+capacity.<br>
+</big></p>
+<p><big><b><tt>- Keep in memory last unsaved series:</tt></b> if this
+flag
+is checked, and if the store button is not active (red), the last
+acquired series (pulsed or gapfree) is&nbsp; stored in an internal
+buffer and can be recovered using <span style="font-family: monospace;">File-&gt;Recover
+last unsaved series</span>.</big></p>
+<p><big><b><tt>- Update disk file after each series:</tt></b> if this
+flag
+is checked, and if the store button is active (red), all currently
+acquired data (that is shown in the tree) is saved on the specified
+disk-file, after completion of a series that is acquired with the store
+button active. Normally, this should not be necessary, but if the
+computer tends to crash, or if you have experienced data loss, you may
+opt to check this flag.<br>
+</big></p>
+<big><a name="PGFEditor"></a></big>
+<p><br>
+</p>
+<p><a name="PGFEditor"></a><b><font size="+3">9. Stimulation-Sequence
+Editor</font></b>
+</p>
+<p><big>Sorry, almost no help yet.
+</big></p>
+<p><big>The upper bar of buttons and fields is used to select the
+squence to
+be edited.
+</big></p>
+<p><big>An internal "buffer" keeping at most one stimulation sequence
+can be
+used to copy stimulation sequences from one pool (stored on a file) to
+another or from a data file to a pool. To this end the buttons "<tt>Copy
+in internal buffer</tt>" and "<tt>Paste from internal buffer</tt>" in
+this
+dialog, and the command "<tt>Edit-&gt;Copy pulse protocol</tt>" are
+used.
+The latter command copies the pulse protocol from the currently
+selected
+tree item (if this is an entry or a series) into the internal buffer.
+</big></p>
+<p><big>The "<tt>Load</tt>" - button loads a pool of
+stimulation-sequences
+from
+a file.
+</big></p>
+<p><big>The "<tt>Make train</tt>" button can be used to create a train
+like
+stimulation by copying the existing segments. There is no limitation in
+the number of segments such that e.g. trains with several thousand of
+segments
+can be created without problems (if the number is not excessively large
+such that memory problems might arise).
+</big></p>
+<p><big>For each segment the class determines what voltages shall be
+assigned
+during the time of the segment.
+<br>
+&nbsp;&nbsp;&nbsp; <tt>constant</tt>&nbsp;&nbsp;&nbsp;&nbsp; means
+that the voltage is constant and is calculated according to the values
+assigned in the fields.
+<br>
+&nbsp;&nbsp;&nbsp; <tt>ramp</tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+means that the voltage changes linear from the previous value to the
+one
+calculated according to the values assigned in the fields.
+<br>
+&nbsp;&nbsp;&nbsp; <tt>vhold&nbsp;</tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+means that the voltage is kept fixed at the holding potential&nbsp;
+as in the main control outside of this dialog</big><br>
+&nbsp;
+</p>
+<p><a name="RemoteControl"></a><b><font size="+3">10. Remote control:
+reading
+a command batch file, 'macros', and triggering of macros by digital
+input</font></b>
+</p>
+<p><big>GePulse can be remotely controlled by an ASCII-text batch file
+containing
+one or more commands. The name of the batch-file is chosen in the
+settings-dialog.
+It will be stored in the settings-file along with the other settings if
+the settings are saved on file.<br>
+</big></p>
+<p><big>Similarly, up to ten 'macro' strings
+can be edited (<span style="font-family: monospace;">Commands-&gt;EditCommands</span>)
+and the corresponding sequence of commands is executed by pressing
+<span style="font-weight: bold;">Ctrl+F1 ... Ctrl+F10</span>. The
+commands in these strings are treated
+identical as the ones saved in the batch file (see below). The 10
+command strings are contained in the general settings file that can be
+loaded and saved through the <span style="font-family: monospace;">Edit-&gt;Settings
+(F8)</span> menu command.<br>
+</big></p>
+<p><big>If you have a National Instruments interface and if you have
+selected "Monitor digital input" in the "Define interface" dialog you
+can also trigger one or more of these 10 command macros by changing the
+status of a digital input line. The behavior is controlled in the <span
+ style="font-family: monospace;">Commands-&gt;EditCommands d</span>ialog.
+</big></p>
+<p><big>To invoke the reading of the batch file select "<tt>Commands-&gt;Read
+Command
+file</tt>" or hit <tt>Ctrl+K</tt>. This will open the batch-file, and
+read
+and execute the commands. Some error message are generated if for some
+reason the command(s) could not be executed or if a syntax-error
+occurred.<br>
+</big></p>
+<p><big>If a command cannot be read because of a syntax error (e.g. no
+space
+between
+"Vhold" and "-0.1" in the example below) processing of the batch
+file/command string
+is
+interrupted and no further commands will be read.
+</big></p>
+<p><big>If more than 1 command is present, the commands have to be
+separated
+by a ";".
+</big></p>
+<p><big>Example:
+</big></p>
+<p><big><tt>Vhold -0.1; STO 0</tt>
+</big></p>
+<p><big>These commands set the holding potential to -100 mV and
+switches off
+the test/seal pulse -&nbsp; if it was on.
+<br>
+No distinction is made between upper and lower case, thus the above
+line is equivalent to
+</big></p>
+<p><big><tt>vHOLD -0.1; stO 0</tt>
+</big></p>
+<p><big>The space between the "Vhold" and the value "-0.1" is
+essential!
+Thus
+the command
+</big></p>
+<p><big><tt>Vhold-0.1</tt>
+</big></p>
+<p><big>will have no effect and will stop further processing.
+</big></p>
+<p><big><b>So far the following commands are implemented:</b>
+</big></p>
+<p><big><b><tt>Vhold value</tt></b>&nbsp;&nbsp;&nbsp; - "value" is the
+voltage
+in Volts
+</big></p>
+<p><big><b><tt>Average value</tt></b>&nbsp;&nbsp;&nbsp; - put the
+average number to </big><big><tt>value</tt></big></p>
+<p><big><b><tt>G0 value</tt></b>&nbsp;&nbsp; - put display gain
+of&nbsp;
+channel&nbsp;
+0 to <tt>value</tt>
+<br>
+&#8230;
+<br>
+<b><tt>G3 value</tt></b>&nbsp;&nbsp; - put display gain of&nbsp;
+channel
+3&nbsp; to <tt>value</tt>
+</big></p>
+<p><big><b><tt>GAIN0 value</tt></b>&nbsp;&nbsp; - put gain of&nbsp;
+channel&nbsp;
+0 to <tt>value. </tt>This works only if the gain is editable in the
+front-panel.
+See <a href="#Parameters">6. How is the gain read</a>.
+<br>
+&#8230;
+<br>
+<b><tt>GAIN3 value</tt></b>&nbsp;&nbsp; - put&nbsp; gain of&nbsp;
+channel
+3&nbsp; to <tt>value. </tt>This works only if the gain is editable in
+the
+front-panel. See <a href="#Parameters">6. How is the gain read</a>.
+</big></p>
+<p><big><b><tt>Off0 value</tt></b>&nbsp;&nbsp; - put display offset
+of&nbsp;
+channel&nbsp; 0 to <tt>value</tt>
+<br>
+&#8230;
+<br>
+<b><tt>Off3 value</tt></b>&nbsp;&nbsp; - put display offset of&nbsp;
+channel&nbsp; 3 to <tt>value</tt>
+<br>
+&nbsp;
+</big></p>
+<p><big><b><tt>D0 value</tt></b>&nbsp;&nbsp; - put digital output
+channel&nbsp;
+0 to <tt>value</tt> (value = 0 or 1)
+<br>
+&#8230;
+<br>
+<b><tt>D9 value</tt></b>&nbsp;&nbsp; - put digital output channel&nbsp;
+9 to <tt>value</tt> (value = 0 or 1)
+</big></p>
+<p><big><b><tt>DO value</tt>&nbsp;</b>&nbsp; -&nbsp; put the digital
+outputs
+to "value" (the O is not a zero but an "oh").
+<br>
+&nbsp;examples: "<tt>DO 0101</tt>" &#8211; will put Dig-out&nbsp; channel
+0 to 0
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+channel 1 to 1
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+channel 2 to 0 and
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+channel 3 to 1
+</big></p>
+<p><big>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "<tt>DO 11</tt>" &#8211; will put
+Dig-out&nbsp;
+channel 0 to 1 and
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+channel 1 to 1
+</big></p>
+<p><big>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "<tt>DO 101</tt>"&nbsp; &#8211; will
+put
+Dig-out&nbsp;
+channel 0 to 1,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+channel 1 to 0 and
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+channel 2 to 1
+</big></p>
+<p><big><b><tt>A0 value</tt></b>&nbsp; -&nbsp; put analog output
+channel 0
+to
+value,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+where value is in Volts (normally from -10 to 10 V)
+<br>
+&#8230;
+</big></p>
+<p><big><b><tt>A7 value</tt></b>&nbsp;&nbsp;&nbsp;&nbsp; - put analog
+output
+channel 7 to value
+<br>
+&nbsp;
+</big></p>
+<p><big><b><tt>STO value</tt></b>&nbsp;&nbsp; - switch seal-test on /
+off if
+value is 1 / 0.
+</big></p>
+<p><big><b><tt>STO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the seal/test-pulse
+button
+i.e. toggles on and off
+</big></p>
+<p><big><b><tt>SW value&nbsp;</tt></b>&nbsp;&nbsp; - start sweep with
+index
+"value". To start gap-free use "<b>SW -1</b>" .
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+This has no effect if an acquisition is already ongoing.&nbsp; To start
+another stimulation you have to use the <span
+ style="font-family: monospace;">wait </span>command (see below).<br>
+</big></p>
+<p><big><b><tt>BREAK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- same effect as clicking on the "Break" button i.e. interrupt
+acquistion
+</big></p>
+<p><big><b><tt>STOP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- same effect as clicking on the "Stop" button i.e .finish sweep, then
+stop acquistion (gap-free: stops immediately!)
+</big></p>
+<p><big><b><tt>CLEAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- same effect as clicking on the "Clear" button i.e .clear screen
+</big></p>
+<p><big><b><tt>RESETTIMER&nbsp;&nbsp;&nbsp;</tt></b>&nbsp; - same
+effect as
+clicking on the "Reset" button i.e .sets timer to 0
+</big></p>
+<p><big><b><tt>RESETSCALES&nbsp;&nbsp;&nbsp;</tt></b>&nbsp; - same
+effect as
+clicking on the "Re. Sc." button i.e .set scales to 1 and puts full
+time
+scale
+</big></p>
+<p><big><b><tt>FILTER value</tt></b>&nbsp;&nbsp;&nbsp; - "value" is the
+digital
+filter frequency in Hz
+</big></p>
+<p><big><b><tt>OVERLAY value</tt></b>&nbsp;&nbsp; - switch overlay of
+traces
+on / off if value is 1 / 0.
+</big></p>
+<p><big><b><tt>OVERLAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the "Overlay" button
+i.e.
+toggles on and off
+</big></p>
+<p><big><b><tt>OVERLAYALL value</tt></b>&nbsp;&nbsp; - switch overlay
+all of
+traces on / off if value is 1 / 0.
+</big></p>
+<p><big><b><tt>OVERLAYALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the "Overlay All" button
+i.e. toggles on and off
+</big></p>
+<p><big><b><tt>SUBTRACTLEAK value</tt></b>&nbsp;&nbsp; - switch
+"Subtract
+leak"
+on / off if value is 1 / 0.
+</big></p>
+<p><big><b><tt>SUBTRACTLEAK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the "Leak sub." button
+i.e.
+toggles on and off<br>
+</big></p>
+<p><big><b><tt>SUBTRACTBASELINE value</tt></b>&nbsp;&nbsp; - switch
+"Subtract
+baseline"
+on / off if value is 1 / 0.
+</big></p>
+<p><big><b><tt>SUBTRACTBASELINE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the "Sub baseline"
+button
+i.e.
+toggles on and off
+</big></p>
+<p><big><b><tt>SHOWLEAK value</tt></b>&nbsp;&nbsp; - switch "Show leak"
+on /
+off if value is 1 / 0.
+</big></p>
+<p><big><b><tt>SHOWLEAK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the "Show Pn." button
+i.e.
+toggles on and off
+</big></p>
+<p><big><b><tt>STORE value</tt></b>&nbsp;&nbsp; - switch "Store" on /
+off if
+value is 1 / 0.
+</big></p>
+<p><big><b><tt>STORE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></b>&nbsp;&nbsp;
+- without argument: same effect as clicking on the "STORE." button i.e.
+toggles on and off
+</big></p>
+<p><big><tt><b>RSCM</b>&nbsp;</tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- same as selecting <tt>Commands-&gt;Calc Rs Cm (when seal test on)</tt>
+(i.e
+calculate Rs and Cm)<br>
+</big></p>
+<p><big><tt><b>PLAYSOUND value</b></tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- if value = 0 playsound is switched off, else it is switched on</big></p>
+<p><big><tt><b>ZAP&nbsp;</b>&nbsp;</tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- same as selecting <tt>Commands-&gt;Zap</tt> (i.e zap = apply a short
+pulse
+to go whole cell; the sample time used is the same as for the seal-test
+pulse)
+</big></p>
+<p><big><b><tt>ZAPDURATION value </tt></b>- set the duration of the
+zap-pulse
+to "value" (in seconds)
+</big></p>
+<p><big><b><tt>ZAPAMPLITUDE value </tt></b>- set the amplitude of the
+zap-pulse
+to "value" (in Volts) <br>
+</big></p>
+<p><big><b><tt>COMMENT string </tt></b>- this command is to insert
+comments during a gap-free recording; a new sweep is started and gets
+this comment as name. The event is also stored in the gap-free events
+list.<br>
+</big></p>
+<p><big><span style="font-family: monospace;">wait poll_duration</span>
+&nbsp; - this command is essential if more
+than one stimulation sequence shall be started, or if for example you
+want to set a digital lineafter a simulation is finished or change the
+holding potential after a stimulation sequence ... The meaning of the
+WAIT command is as follows: the WAIT command halts the batch-processing
+as long as a stimulation is going on. As soon as no stimulation is
+active, batch pocessing resumes. The poll-duration parameter determines
+the timer interval in milliseconds that is used to check if a
+stimulation is going on. For example <span
+ style="font-family: monospace;">WAIT 20;</span> will start a timer
+that checks every 20 ms if a stimulation is on. The following sequence
+of commands will set Vhold to 0, then start sequence 0, then set vhold
+to -50 mV, then start sequence 1, then set vhold back to 0 mV:<span
+ style="font-family: monospace;"> <br>
+</span></big></p>
+<p><big><span style="color: rgb(255, 0, 0);"><a name="WAIT_BUG"></a>ATTENTION:
+The following command sequence will not work properly:<br>
+<span style="font-family: monospace;"><br>
+sto 1; some_commands; break;
+wait; further_commands;</span><br>
+</span></big></p>
+<p><big><span style="color: rgb(255, 0, 0);">The <span
+ style="font-family: monospace;">sto 1 </span>command will
+start the seal-test pulse and the <span style="font-family: monospace;">some_commands</span>
+will also be executed. However, the overhead to start the sealtest is
+generally quite long such that when the <span
+ style="font-family: monospace;">break</span> command is executed, the
+sealtest is not yet started. Thus, the <span
+ style="font-family: monospace;">break</span> command will actually
+NOT&nbsp; interrupt the sealtest and the wait command will wait
+forever, until the sealtest is interrupted manually.<br>
+</span></big></p>
+<p><big><span style="font-family: monospace;">WAIT</span> &nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; - without
+specification of the poll-duration is equivalent to <span
+ style="font-family: monospace;">WAIT 50</span> (i.e. the
+default poll-duration is 50 ms)<br>
+</big></p>
+
+<p><big><span style="font-family: monospace;">donothing time_in_millisecods</span>
+&nbsp; - this command invokes a waiting cycle during which no other command is processed and the continuous pararameter measurements (current, voltage, gains, etc) is interrupted. For example <span
+ style="font-family: monospace;">A0 5.0; DONOTHING 1000;A0 -5; </span> will put analog out to 5 volts; wait 1 second, put analog out 0 to - 5 Volts.</big></p>
+
+
+<p><big><br>
+The following commands are applicable if a Pollux step motor is
+connected to a serial port.<br>
+</big></p>
+<p><big><span style="font-family: monospace;">POLLUX_MOVE_REL&nbsp;
+value&nbsp;</span> &nbsp;&nbsp; &nbsp;&nbsp; -
+move the Pollux controlled step motor by "value" microns, relative<br>
+</big></p>
+<big><span style="font-family: monospace;">POLLUX_MOVE_ABS&nbsp;
+value&nbsp;</span> &nbsp;&nbsp;
+&nbsp;&nbsp; -
+move the Pollux controlled step motor by "value" microns, absolute<br>
+</big>
+<big><br>
+</big><big><span style="font-family: monospace;">POLLUX_GO_HOME</span>&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; -
+move the Pollux controlled step motor to the home position<br>
+</big>
+<big><br>
+</big><big><span style="font-family: monospace;">POLLUX_SET_HOME</span>&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; -set</big><big>
+the current Pollux controlled step motor position as the new home
+position<br>
+</big>
+<big>&nbsp;
+</big>
+<p>&nbsp;
+</p>
+<p><a name="RsCm"></a><b><font size="+3">11. How to control the Rs and
+Cm
+calculation</font></b>
+</p>
+<p><big>Using the current response recorded on channel 0 with the
+"seal-test"
+pulse it is possible to estimate the series resistance, Rs, and the
+membrane
+capacitance, Cm. In the flags dialog (<tt>Edit-&gt;Flags</tt>) it is
+determined
+if this calculation should be done with each seal-test pulse, or only
+on
+demand. The "on-demand" is activated either with <tt>Commands-&gt;Calc
+Rs
+Cm</tt>, or clicking on the corresponding button in the lower-left
+sub-window,
+or hitting "<tt>C</tt>" (The values of Rs and Cm are written on the
+parameters
+value file if the corresponding <a href="#ParametersValueFile">option&nbsp;</a>
+of writing this file is activated).
+</big></p>
+<p><big>How are Rs and Cm calculated? Cm is in either case calculated
+by
+integrating
+the charge during the first half of the first step in the test-pulse
+after
+subtracting the resistive component. The resistive component is
+estimated
+by the mean of the current during the second half of the first
+pulse&nbsp;
+(assuming that this is steady state).
+<br>
+Thus&nbsp;&nbsp;&nbsp;&nbsp; <tt>Cm = [Integral over {(I-Iss)} ]/
+DeltaV</tt>&nbsp;&nbsp;&nbsp;&nbsp;
+(where Iss is the steady state current).
+<br>
+DeltaV is the voltage-step of the seal-test pulse.
+</big></p>
+<p><big>Rs is calculated using the formula
+<br>
+<tt>Rs = DeltaV / I0</tt>
+<br>
+Here I0 is the estimated initial current minus the steady-state
+current,
+Iss (Iss is obtained as described above).
+<br>
+The calculation of I0 depends on the method chosen in the <tt>Edit-&gt;Flags</tt>
+dialog. If "<tt>Calc with simple method (I0, Q)</tt>" is selected I0 is
+taken as the maximum value of I-Iss during the first half of the step.
+<br>
+If&nbsp; "<tt>Extrapolate exponential to get I0</tt>" is selected,
+a single exponential function is fitted and back-extrapolated using the
+following conditions:
+<br>
+The fit begins after the delay calculated by "1/bandwidth" , where
+the bandwidth is obtained from the parameters. However, the delay is
+not
+larger than 1/4 of the length of the segment of the first step in the
+test-pulse.
+The single-exponential is then back-extrapolated to 1/2 of the delay to
+estimate I0. TRY IT OUT! It may not work for your conditions.
+Suggestions
+are always welcome!
+<br>
+</big>
+&nbsp;
+</p>
+<p><a name="Sound"></a><b><font size="+3">12. Sound indication</font></b>
+</p>
+<p><big>This feature does not yet work properly. It is intended to
+produce a
+tone whose frequency depends either on the membrane potential, Vm (to
+give
+an aid for the penetration of oocytes with the potential electrode), or
+dependent on the resistance (to give an aid when touching the cell with
+the patch-pipette).
+</big></p>
+<p><a name="Appendix"></a><b><font size="+4">Appendix</font></b>
+<br>
+&nbsp;
+</p>
+<p><a name="Limitation-ITC-16"></a><b><font size="+3">A1. Limitation in
+gap-free
+recording with the ITC-16/18 interface when the holding-potential is
+changed
+during the acquisition</font></b>
+</p>
+<p>Because of the special architecture of the ITC-16/18 interfaces the
+output at a DAC can not be changed at an a priori undefined time-point
+(i.e. at user's will) without briefly interrupting the ongoing
+acquisition.
+Thus, if during a "gap-free" continuous acquisition the holding
+potential
+is changed some data are lost. On one computer the gap amounted to 15
+sample-points
+but I have done no systematic analysis.
+<br>
+You can measure the gap e.g. by acquiring a sine wave and looking later
+how much points are missing. If you never change the holding potential,
+no gap will occur.
+</p>
+<p><a name="KnownBugs"></a><b><font size="+3">A2. Known bugs</font></b>
+</p>
+<p>- When sampling more than 2 channels with the ITC16 interface there
+is a problem with the channel assignment. Maybe someone can help me
+here.
+<br>
+- The ITC18 is little tested so far.<br>
+- Some theoretically possible command sequences for batch processing
+will not work properly. See <a href="#WAIT_BUG">here</a> for an
+example. <br>
+</p>
+<p> <br>
+</p>
+<p><a name="FileFormat"></a><b><font size="+3">A3. The file format<br>
+</font></b></p>
+<p><br>
+An up-to-date description of the file format (13/04/06) can be found in
+this <a href="docs/GePulseVersion2.doc">MS-Word file</a>.<br>
+</p>
+<p>Chengyu Li, from the university of Berkley, has created a Matlab
+program able to read current Gepulse data files. Download<a
+ href="docs/ReadGepulseMatLab.zip"> here (zipped)</a>.<br>
+</p>
+<p><br>
+</p>
+<p><span style="text-decoration: underline;">The following code is old,
+refering to Version 1<br>
+<br>
+</span><tt>char[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"GePulse"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+7 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DataFormat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes //normally "0" indicating&nbsp; 2 bytes per point, right now.</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NumberOfSeries&nbsp;
+4 bytes</tt>
+</p>
+<p><font size="+1">Then come all <b><u><a href="#FormatSingleSeries">series,
+one after the other</a></u></b></font>
+</p>
+<p><font size="+1">Then the general header continues:</font>
+</p>
+<p><tt><a href="#SystemTimeFormat">SYSTEMTIME</a>&nbsp;
+time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+18 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthLabel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>char[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthLabel bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthComment&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>char[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthComment bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ExperimentNumber&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+unused[100]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+400 bytes</tt>
+</p>
+<p><b><font size="+2">END DATAFILE</font></b>
+<br>
+&nbsp;
+</p>
+<p><a name="FormatSingleSeries"></a><b><font size="+2">A single series:</font></b>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+SweepType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes // 0 for Pulsed; 1 for GapFree</tt>
+<br>
+<tt>if SweepType==GapFree then</tt>
+<br>
+<tt>&nbsp;&nbsp; int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthGapFreeParamList&nbsp;&nbsp; 4 bytes</tt>
+<br>
+<tt>&nbsp;&nbsp; for each entry of the list:&nbsp;&nbsp; <a
+ href="#GapFreeParam">GapFreeParam</a></tt>
+<br>
+<tt>end if</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NumberOfChannels 4
+bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NumberOfSweeps&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><font size="+1">Then come all <b><u><a href="#SweepFormat">sweeps,
+one
+after the other</a></u></b></font>
+</p>
+<p><font size="+1">Then the series continues:</font>
+</p>
+<p><tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+StimPresent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes;</tt>
+</p>
+<p><tt>if (StimPresent)then</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; <a href="#StimulationSequence">StimulationSequence</a></tt>
+<br>
+<tt>end if</tt>
+</p>
+<p><tt><a href="#SystemTimeFormat">SYSTEMTIME</a>&nbsp;
+time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+18 bytes</tt>
+</p>
+<p><tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+frequency&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Potential&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VHold&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Resistance&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+unused[4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+16 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Temperature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+unused[2]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+UserParam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+UserParam2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>for(i=0; i&lt;14; i++){</tt>
+<br>
+<tt>&nbsp;&nbsp; char&nbsp;
+UserParam1Name[i]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1 byte</tt>
+<br>
+<tt>&nbsp;&nbsp; char&nbsp;
+UserParam2Name[i]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1 byte // total of 28 for the names</tt>
+<br>
+<tt>}</tt>
+<br>
+<tt>for (i=0; i&lt;2; i++){</tt>
+<br>
+<tt>&nbsp;&nbsp; char&nbsp;
+UserParam1Unit[i]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1 byte</tt>
+<br>
+<tt>&nbsp;&nbsp; char&nbsp;
+UserParam2Unit[i]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1 byte // total of 4 for the units</tt>
+<br>
+<tt>}</tt>
+<br>
+<tt>double&nbsp;&nbsp;
+DataFactor[16]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+128 bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;
+NumAveraged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;
+RecordingMode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes&nbsp; // inside out : 0; on-cell: 1; outside-out: 2;
+whole-cell:
+3; voltage-clamp: 4</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;
+LengthComment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>char[]&nbsp;&nbsp;
+Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthComment bytes</tt>
+<br>
+<tt>int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+unused[20]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+80 bytes</tt>
+</p>
+<p><b><tt><font size="+1">END SERIES</font></tt></b>
+<br>
+&nbsp;
+</p>
+<p><a name="GapFreeParam"></a><b><font size="+2">GapFreeParam:</font></b>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+index&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes&nbsp; // the data index of the event</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp; GapFreeParamType 4 bytes&nbsp; //
+0: changed vhold; 1: mark; 2: comment</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;
+VHold&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp; LengthComment&nbsp;&nbsp;&nbsp; 4
+bytes</tt>
+<br>
+<tt>char[]&nbsp;&nbsp;&nbsp;
+Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthComment bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;
+DataFactor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes // unused right now</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+Unused[100]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+400 bytes</tt>
+</p>
+<p><b><font size="+1">END GAPFREEPARAM</font></b>
+<br>
+&nbsp;
+</p>
+<p><a name="SweepFormat"></a><b><font size="+2">A single sweep:</font></b>
+</p>
+<p><tt><a href="#SystemTimeFormat">SYSTEMTIME</a>&nbsp;
+time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+18 bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+StimCount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+SweepCount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp; AverageCount&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Leak&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+LengthLabel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>char[]&nbsp;&nbsp;&nbsp;
+Label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthLabel bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+DataPoints&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp; DataSizeInBytes&nbsp; 4 bytes</tt>
+</p>
+<p><tt>double&nbsp;&nbsp;&nbsp;
+Cm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;
+Gs(=1/Rs)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;
+Rs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;
+unused[30]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+120 bytes</tt>
+</p>
+<p><tt>for (i=0; i&lt;NChannels; i++){</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp; byte[]&nbsp;&nbsp;
+data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DataSizeInBytes*DataPoints bytes</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp; if (Leak) then&nbsp; byte[]&nbsp;&nbsp;
+leak&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DataSizeInBytes*DataPoints bytes</tt>
+<br>
+<tt>}</tt>
+</p>
+<p><b><font size="+1">END SINGLE SWEEP</font></b>
+<br>
+&nbsp;
+</p>
+<p><a name="StimulationSequence"></a><b><font size="+2">StimulationSequence:</font></b>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NumberOfSegments&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><font size="+1">Then come all <b><u><a href="#SegmentFormat">segments,
+one after the othe</a><a href="#SweepFormat">r</a></u></b></font>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthEntryName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><tt>char[]&nbsp;&nbsp;&nbsp;&nbsp;
+EntryName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthEntryName bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+SampleTime&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+unused&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+SweepInterval&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NumberSweeps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NumberRepeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+RepeatWait&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LengthLinkedSequence 4 bytes</tt>
+<br>
+<tt>char[]&nbsp;&nbsp;&nbsp;&nbsp;
+LinkedSequence&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LengthLinkedSequence bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+LinkedWait&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LeakCount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+LeakSize&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+LeakHolding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LeakAlternate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AltLeakAveraging&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+LeakDelay&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>in32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NumberOfTriggers&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes // unused</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+RelevantXSegment&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+RelevantYSegment&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WriteEnabled&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+unused[37]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+148 bytes</tt>
+<br>
+<tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WaitBeforeFirst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+</p>
+<p><b><font size="+1">END STIMULATION SEQUENCE</font></b>
+<br>
+&nbsp;
+</p>
+<p><a name="SegmentFormat"></a><b><font size="+2">Stim segment:</font></b>
+</p>
+<p><tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+SegmentClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>BOOL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IsHolding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+Voltage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+Duration&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+DeltaVFactor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+DeltaVIncrement&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+DeltaTFactor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>double&nbsp;&nbsp;&nbsp;&nbsp;
+DeltaTIncrement&nbsp;&nbsp;&nbsp;&nbsp;
+8 bytes</tt>
+<br>
+<tt>int32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+unused[5]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+20 bytes</tt>
+</p>
+<p><b><font size="+1">END STIM SEGMENT</font></b>
+<br>
+&nbsp;
+</p>
+<p><a name="SystemTimeFormat"></a><b><font size="+2">System time:</font></b>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wDay&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wDayOfWeek&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wHour&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wMilliseconds&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wMinute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wMinute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes // yes, twice. Bug kept for compatibility</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wMonth&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wSecond&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+<br>
+<tt>WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wYear&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2 bytes</tt>
+</p>
+<p><b><font size="+1">END SYSTEMTIME</font></b>
+</p>
+
+
+
+</body>
+</html>
